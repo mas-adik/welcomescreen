@@ -13,7 +13,8 @@
   <!-- Google Fonts: Plus Jakarta Sans -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
 
   <script>
     tailwind.config = {
@@ -81,6 +82,7 @@
         opacity: 0;
         transform: translateY(20px) scale(0.98);
       }
+
       to {
         opacity: 1;
         transform: translateY(0) scale(1);
@@ -89,8 +91,13 @@
 
     /* Continuous Marquee Running Text */
     @keyframes marquee {
-      0% { transform: translateX(100%); }
-      100% { transform: translateX(-100%); }
+      0% {
+        transform: translateX(100%);
+      }
+
+      100% {
+        transform: translateX(-100%);
+      }
     }
 
     .animate-marquee {
@@ -115,10 +122,12 @@
     <!-- HEADER: BRANDING & DIGITAL CLOCK -->
     <header class="flex items-center justify-between w-full shrink-0">
       <div class="flex items-center space-x-4">
-        <div id="host-logo-wrapper" class="px-5 py-2.5 rounded-2xl bg-white/10 border border-white/20 backdrop-blur-md flex items-center space-x-3.5 shadow-lg">
+        <div id="host-logo-wrapper"
+          class="px-5 py-2.5 rounded-2xl bg-white/10 border border-white/20 backdrop-blur-md flex items-center space-x-3.5 shadow-lg">
           <img id="host-logo-img" src="" alt="Logo Perusahaan" class="h-9 w-auto object-contain hidden">
           <i id="host-logo-icon" class="fa-solid fa-building-user text-amber-400 text-xl"></i>
-          <span id="host-name-preview" class="font-bold text-sm md:text-base tracking-widest text-white uppercase">PT. MAHAKARYA STAMPING JAYA</span>
+          <span id="host-name-preview" class="font-bold text-sm md:text-base tracking-widest text-white uppercase">PT.
+            MAHAKARYA STAMPING JAYA</span>
         </div>
       </div>
 
@@ -127,24 +136,28 @@
         <div id="clock-date" class="text-xs md:text-sm font-semibold tracking-wider text-slate-300 uppercase mb-1">
           MINGGU, 30-08-2026
         </div>
-        <span id="clock-time" class="text-3xl md:text-4xl font-extrabold tracking-tight text-white leading-none drop-shadow-md">
+        <span id="clock-time"
+          class="text-3xl md:text-4xl font-extrabold tracking-tight text-white leading-none drop-shadow-md">
           11:10:12
         </span>
       </div>
     </header>
 
     <!-- MAIN WELCOME CONTENT AREA -->
-    <section class="my-auto py-6 flex flex-col items-center text-center animate-enter overflow-y-auto max-h-[calc(100vh-200px)] px-4">
-      
+    <section
+      class="my-auto py-6 flex flex-col items-center text-center animate-enter overflow-y-auto max-h-[calc(100vh-200px)] px-4">
+
       <!-- Subheading Badge -->
-      <div class="inline-flex items-center px-7 py-2 rounded-full bg-white/10 border border-white/20 backdrop-blur-md mb-4 shrink-0 shadow-lg">
+      <div
+        class="inline-flex items-center px-7 py-2 rounded-full bg-white/10 border border-white/20 backdrop-blur-md mb-4 shrink-0 shadow-lg">
         <span id="welcome-subheading" class="text-xs md:text-sm font-black tracking-[0.25em] text-amber-300 uppercase">
           SALAM HANGAT & SELAMAT DATANG
         </span>
       </div>
 
       <!-- Agenda Topic -->
-      <p id="guest-purpose" class="text-lg md:text-2xl text-slate-200 font-medium mb-10 max-w-4xl tracking-wide shrink-0 drop-shadow-lg">
+      <p id="guest-purpose"
+        class="text-lg md:text-2xl text-slate-200 font-medium mb-10 max-w-4xl tracking-wide shrink-0 drop-shadow-lg">
         Agenda: Pembahasan Kerja Sama Strategis & Silaturahmi Bisnis
       </p>
 
@@ -156,14 +169,18 @@
 
     <!-- FOOTER: SAFETY INDUCTION & RUNNING TEXT -->
     <footer class="w-full shrink-0">
-      <div class="rounded-2xl px-6 py-3.5 flex items-center overflow-hidden relative border border-white/20 bg-black/40 backdrop-blur-md shadow-2xl">
-        <div id="safety-badge" class="flex items-center space-x-2 text-amber-300 text-xs font-black px-4 py-1.5 rounded-xl bg-white/10 border border-white/20 mr-5 uppercase tracking-wider shrink-0 shadow-md">
+      <div
+        class="rounded-2xl px-6 py-3.5 flex items-center overflow-hidden relative border border-white/20 bg-black/40 backdrop-blur-md shadow-2xl">
+        <div id="safety-badge"
+          class="flex items-center space-x-2 text-amber-300 text-xs font-black px-4 py-1.5 rounded-xl bg-white/10 border border-white/20 mr-5 uppercase tracking-wider shrink-0 shadow-md">
           <i class="fa-solid fa-shield-halved text-amber-400"></i>
           <span>SAFETY INDUCTION</span>
         </div>
         <div class="relative w-full overflow-hidden whitespace-nowrap">
           <div id="marquee-text" class="animate-marquee font-semibold text-slate-100 text-xs md:text-sm tracking-wide">
-            Selamat datang di gedung kami. Demi keselamatan bersama, harap perhatikan jalur evakuasi dan denah darurat di sekitar area Anda • Bila terjadi keadaan darurat, ikuti petunjuk menuju Titik Kumpul (Assembly Point) • Terima kasih atas kunjungan Anda.
+            Selamat datang di gedung kami. Demi keselamatan bersama, harap perhatikan jalur evakuasi dan denah darurat
+            di sekitar area Anda • Bila terjadi keadaan darurat, ikuti petunjuk menuju Titik Kumpul (Assembly Point) •
+            Terima kasih atas kunjungan Anda.
           </div>
         </div>
       </div>
@@ -172,26 +189,33 @@
 
   <!-- QUICK CONTROLS -->
   <div id="quick-controls-container" class="fixed bottom-6 right-6 z-40 flex items-center space-x-3">
-    <button id="toggle-fullscreen-btn" onclick="toggleFullscreen()" class="w-12 h-12 rounded-full bg-slate-900/80 text-white border border-white/20 shadow-2xl flex items-center justify-center hover:bg-amber-500 hover:text-slate-950 hover:scale-110 transition-all opacity-40 hover:opacity-100" title="Layar Penuh">
+    <button id="toggle-fullscreen-btn" onclick="toggleFullscreen()"
+      class="w-12 h-12 rounded-full bg-slate-900/80 text-white border border-white/20 shadow-2xl flex items-center justify-center hover:bg-amber-500 hover:text-slate-950 hover:scale-110 transition-all opacity-40 hover:opacity-100"
+      title="Layar Penuh">
       <i id="fullscreen-icon" class="fa-solid fa-expand text-base"></i>
     </button>
-    <button id="open-settings-btn" class="w-12 h-12 rounded-full bg-slate-900/80 text-white border border-white/20 shadow-2xl flex items-center justify-center hover:bg-amber-500 hover:text-slate-950 hover:scale-110 transition-all opacity-40 hover:opacity-100" title="Panel Kontrol">
+    <button id="open-settings-btn"
+      class="w-12 h-12 rounded-full bg-slate-900/80 text-white border border-white/20 shadow-2xl flex items-center justify-center hover:bg-amber-500 hover:text-slate-950 hover:scale-110 transition-all opacity-40 hover:opacity-100"
+      title="Panel Kontrol">
       <i class="fa-solid fa-sliders text-base"></i>
     </button>
   </div>
 
   <!-- ADMIN CONTROL PANEL MODAL -->
   <div id="admin-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden items-center justify-center p-4">
-    <div class="glass-panel w-full max-w-4xl max-h-[90vh] rounded-3xl overflow-hidden shadow-2xl flex flex-col border border-white/20">
+    <div
+      class="glass-panel w-full max-w-4xl max-h-[90vh] rounded-3xl overflow-hidden shadow-2xl flex flex-col border border-white/20">
 
       <div class="px-6 py-4 border-b border-white/10 flex items-center justify-between bg-white/5 shrink-0">
         <div class="flex items-center space-x-3">
-          <div class="w-9 h-9 rounded-xl bg-amber-500/20 flex items-center justify-center text-amber-400 font-bold border border-amber-500/30">
+          <div
+            class="w-9 h-9 rounded-xl bg-amber-500/20 flex items-center justify-center text-amber-400 font-bold border border-amber-500/30">
             <i class="fa-solid fa-tv text-sm"></i>
           </div>
           <h2 class="text-base font-bold text-white">Panel Kontrol Display TV Lobby</h2>
         </div>
-        <button id="close-settings-btn" class="w-8 h-8 rounded-xl bg-white/10 hover:bg-red-500/20 text-slate-300 hover:text-red-400 flex items-center justify-center transition-colors">
+        <button id="close-settings-btn"
+          class="w-8 h-8 rounded-xl bg-white/10 hover:bg-red-500/20 text-slate-300 hover:text-red-400 flex items-center justify-center transition-colors">
           <i class="fa-solid fa-xmark text-sm"></i>
         </button>
       </div>
@@ -199,7 +223,7 @@
       <div class="flex-1 overflow-y-auto p-6 space-y-6">
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-white/5 p-4 rounded-2xl border border-white/10">
-          
+
           <div class="space-y-3">
             <h3 class="text-xs font-bold text-amber-300 uppercase tracking-wider flex items-center space-x-2">
               <i class="fa-solid fa-circle-info"></i>
@@ -208,12 +232,14 @@
 
             <div>
               <label class="block text-[11px] font-semibold text-slate-300 mb-1">Teks Sambutan Utama</label>
-              <input type="text" id="input-welcome-sub" class="w-full bg-slate-900/90 border border-white/20 rounded-xl px-3.5 py-2 text-white text-xs focus:outline-none focus:border-amber-400">
+              <input type="text" id="input-welcome-sub"
+                class="w-full bg-slate-900/90 border border-white/20 rounded-xl px-3.5 py-2 text-white text-xs focus:outline-none focus:border-amber-400">
             </div>
 
             <div>
               <label class="block text-[11px] font-semibold text-slate-300 mb-1">Agenda Kunjungan</label>
-              <input type="text" id="input-guest-purpose" class="w-full bg-slate-900/90 border border-white/20 rounded-xl px-3.5 py-2 text-white text-xs focus:outline-none focus:border-amber-400">
+              <input type="text" id="input-guest-purpose"
+                class="w-full bg-slate-900/90 border border-white/20 rounded-xl px-3.5 py-2 text-white text-xs focus:outline-none focus:border-amber-400">
             </div>
           </div>
 
@@ -225,25 +251,29 @@
 
             <div>
               <label class="block text-[11px] font-semibold text-slate-300 mb-1">Nama Perusahaan Anda</label>
-              <input type="text" id="input-host-name" class="w-full bg-slate-900/90 border border-white/20 rounded-xl px-3.5 py-2 text-white text-xs focus:outline-none focus:border-amber-400">
+              <input type="text" id="input-host-name"
+                class="w-full bg-slate-900/90 border border-white/20 rounded-xl px-3.5 py-2 text-white text-xs focus:outline-none focus:border-amber-400">
             </div>
 
             <!-- Upload Logo Perusahaan -->
             <div>
               <label class="block text-[11px] font-semibold text-slate-300 mb-1">Logo Perusahaan Anda</label>
               <div class="flex items-center space-x-3 bg-slate-900/90 border border-white/20 rounded-xl p-2">
-                <div id="modal-logo-preview" class="w-8 h-8 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center shrink-0 overflow-hidden">
+                <div id="modal-logo-preview"
+                  class="w-8 h-8 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center shrink-0 overflow-hidden">
                   <i id="modal-logo-icon" class="fa-solid fa-image text-slate-400 text-xs"></i>
                   <img id="modal-logo-img" src="" class="w-full h-full object-contain hidden" alt="Preview Logo">
                 </div>
                 <div class="flex-1 min-w-0">
-                  <label for="input-host-logo" class="cursor-pointer inline-flex items-center space-x-1.5 px-3 py-1 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 text-xs font-semibold border border-amber-400/30 transition-colors">
+                  <label for="input-host-logo"
+                    class="cursor-pointer inline-flex items-center space-x-1.5 px-3 py-1 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 text-xs font-semibold border border-amber-400/30 transition-colors">
                     <i class="fa-solid fa-upload"></i>
                     <span>Pilih Logo</span>
                   </label>
                   <input type="file" id="input-host-logo" accept="image/*" class="hidden">
                 </div>
-                <button type="button" onclick="removeHostLogo()" id="btn-remove-logo" class="px-2 py-1 rounded-lg bg-red-500/10 hover:bg-red-500/25 text-red-400 text-xs font-semibold transition-colors hidden">
+                <button type="button" onclick="removeHostLogo()" id="btn-remove-logo"
+                  class="px-2 py-1 rounded-lg bg-red-500/10 hover:bg-red-500/25 text-red-400 text-xs font-semibold transition-colors hidden">
                   <i class="fa-solid fa-trash-can"></i>
                 </button>
               </div>
@@ -253,19 +283,23 @@
             <div>
               <label class="block text-[11px] font-semibold text-slate-300 mb-1.5">Pilih Tema & Animasi Latar</label>
               <div class="grid grid-cols-2 gap-2">
-                <button type="button" onclick="selectTheme('royal')" class="p-2.5 rounded-xl bg-[#0b132b] border border-amber-400/40 text-left transition-all hover:scale-[1.02]">
+                <button type="button" onclick="selectTheme('royal')"
+                  class="p-2.5 rounded-xl bg-[#0b132b] border border-amber-400/40 text-left transition-all hover:scale-[1.02]">
                   <div class="text-[11px] text-amber-300 font-bold">1. Midnight Royal</div>
                   <div class="text-[9px] text-slate-400">Navy Dark + Sparkling Stars</div>
                 </button>
-                <button type="button" onclick="selectTheme('emerald')" class="p-2.5 rounded-xl bg-[#05241b] border border-emerald-400/40 text-left transition-all hover:scale-[1.02]">
+                <button type="button" onclick="selectTheme('emerald')"
+                  class="p-2.5 rounded-xl bg-[#05241b] border border-emerald-400/40 text-left transition-all hover:scale-[1.02]">
                   <div class="text-[11px] text-emerald-300 font-bold">2. Emerald Luxury</div>
                   <div class="text-[9px] text-slate-400">Emerald Dark + Glow Waves</div>
                 </button>
-                <button type="button" onclick="selectTheme('slate')" class="p-2.5 rounded-xl bg-[#0f172a] border border-sky-400/40 text-left transition-all hover:scale-[1.02]">
+                <button type="button" onclick="selectTheme('slate')"
+                  class="p-2.5 rounded-xl bg-[#0f172a] border border-sky-400/40 text-left transition-all hover:scale-[1.02]">
                   <div class="text-[11px] text-sky-300 font-bold">3. Corporate Slate</div>
                   <div class="text-[9px] text-slate-400">Slate Metalic + Cyber Grid</div>
                 </button>
-                <button type="button" onclick="selectTheme('amethyst')" class="p-2.5 rounded-xl bg-[#170b24] border border-pink-400/40 text-left transition-all hover:scale-[1.02]">
+                <button type="button" onclick="selectTheme('amethyst')"
+                  class="p-2.5 rounded-xl bg-[#170b24] border border-pink-400/40 text-left transition-all hover:scale-[1.02]">
                   <div class="text-[11px] text-pink-300 font-bold">4. Deep Amethyst</div>
                   <div class="text-[9px] text-slate-400">Violet Dark + Glowing Orbs</div>
                 </button>
@@ -280,7 +314,8 @@
               <i class="fa-solid fa-building"></i>
               <span>Daftar PT Tamu & Delegasi</span>
             </h3>
-            <button onclick="addCompanyBlock()" class="px-3.5 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-xs font-bold text-slate-950 flex items-center space-x-1">
+            <button onclick="addCompanyBlock()"
+              class="px-3.5 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-xs font-bold text-slate-950 flex items-center space-x-1">
               <i class="fa-solid fa-plus-circle"></i>
               <span>Tambah PT Baru</span>
             </button>
@@ -291,13 +326,15 @@
 
         <div>
           <label class="block text-xs font-semibold text-slate-300 mb-1">Running Text (Safety Induction & Info)</label>
-          <textarea id="input-marquee-text" rows="2" class="w-full bg-slate-900/90 border border-white/20 rounded-xl px-3.5 py-2 text-white text-xs focus:outline-none focus:border-amber-400"></textarea>
+          <textarea id="input-marquee-text" rows="2"
+            class="w-full bg-slate-900/90 border border-white/20 rounded-xl px-3.5 py-2 text-white text-xs focus:outline-none focus:border-amber-400"></textarea>
         </div>
 
       </div>
 
       <div class="px-6 py-3.5 bg-white/5 border-t border-white/10 flex items-center justify-end shrink-0">
-        <button onclick="saveAndApply()" class="px-6 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-xs font-bold text-slate-950 transition-all shadow-lg shadow-amber-500/20">
+        <button onclick="saveAndApply()"
+          class="px-6 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-xs font-bold text-slate-950 transition-all shadow-lg shadow-amber-500/20">
           Terapkan ke Layar TV
         </button>
       </div>
@@ -306,6 +343,26 @@
   </div>
 
   <script>
+    /* SCREEN WAKE LOCK API (Menahan Layar TV Tetap On / Tidak Sleep) */
+    let wakeLock = null;
+
+    async function requestWakeLock() {
+      try {
+        if ('wakeLock' in navigator) {
+          wakeLock = await navigator.wakeLock.request('screen');
+          console.log('Screen Wake Lock Aktif: Layar TV tidak akan sleep.');
+        }
+      } catch (err) {
+        console.warn(`Screen Wake Lock gagal: ${err.name}, ${err.message}`);
+      }
+    }
+
+    document.addEventListener('visibilitychange', async () => {
+      if (wakeLock !== null && document.visibilityState === 'visible') {
+        await requestWakeLock();
+      }
+    });
+
     const DEFAULT_CONFIG = {
       theme: 'royal',
       hostName: 'PT. MAHAKARYA STAMPING JAYA',
@@ -334,7 +391,7 @@
     };
 
     let currentHostLogoBase64 = '';
-    
+
     // Auto clear cache jika masih membawa string lama
     let appState = JSON.parse(localStorage.getItem('welcome_display_data'));
     if (!appState || !appState.marquee || appState.marquee.includes('VIP Lounge')) {
@@ -365,7 +422,7 @@
     function renderDisplay() {
       const body = document.getElementById('main-body');
       const activeTheme = appState.theme || 'royal';
-      
+
       body.className = `w-screen h-screen relative bg-theme-${activeTheme} transition-all duration-1000 overflow-hidden`;
 
       // Update Host Logo
@@ -433,7 +490,7 @@
             comp.guests.forEach((guest) => {
               const card = document.createElement('div');
               card.className = `glass-card rounded-2xl p-4 px-6 flex items-center justify-start space-x-4 border ${borderAccent} shadow-2xl transition-all duration-300 min-w-[300px] max-w-[420px] text-left`;
-              
+
               const initials = getInitials(guest.name);
 
               card.innerHTML = `
@@ -692,9 +749,9 @@
 
     function toggleFullscreen() {
       if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen().catch(() => {});
+        document.documentElement.requestFullscreen().catch(() => { });
       } else {
-        document.exitFullscreen().catch(() => {});
+        document.exitFullscreen().catch(() => { });
       }
     }
 
@@ -820,6 +877,7 @@
     }
 
     window.addEventListener('DOMContentLoaded', () => {
+      requestWakeLock();
       renderDisplay();
       renderCanvasAnimation();
     });
