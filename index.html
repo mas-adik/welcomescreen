@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lobby Welcome Display System - Enterprise Open Source Edition</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts: Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      overflow: hidden;
+      background-color: #050811;
+      color: #ffffff;
+      user-select: none;
+    }
+
+    /* TEMA 1: MIDNIGHT ROYAL (Navy Dark & Bright Gold) */
+    .bg-theme-royal {
+      background: radial-gradient(circle at 50% 30%, #111c38 0%, #0b132b 60%, #040814 100%);
+    }
+
+    /* TEMA 2: EMERALD LUXURY (Emerald & Champagne Gold) */
+    .bg-theme-emerald {
+      background: radial-gradient(circle at 50% 30%, #0a3a2d 0%, #05241b 60%, #02120d 100%);
+    }
+
+    /* TEMA 3: CORPORATE SLATE (Slate Dark & Cyan/Blue) */
+    .bg-theme-slate {
+      background: radial-gradient(circle at 50% 30%, #1e293b 0%, #0f172a 60%, #020617 100%);
+    }
+
+    /* TEMA 4: DEEP AMETHYST (Royal Violet & Rose Gold) */
+    .bg-theme-amethyst {
+      background: radial-gradient(circle at 50% 30%, #2a1640 0%, #170b24 60%, #0a0412 100%);
+    }
+
+    /* High Contrast Glassmorphism Card */
+    .glass-card {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+    }
+
+    .glass-panel {
+      background: rgba(10, 14, 26, 0.96);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    /* Staggered Smooth Entrance Animation */
+    .animate-enter {
+      animation: fadeInScale 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes fadeInScale {
+      from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.98);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    /* Continuous Marquee Running Text */
+    @keyframes marquee {
+      0% { transform: translateX(100%); }
+      100% { transform: translateX(-100%); }
+    }
+
+    .animate-marquee {
+      display: inline-block;
+      white-space: nowrap;
+      animation: marquee 35s linear infinite;
+    }
+
+    .animate-marquee:hover {
+      animation-play-state: paused;
+    }
+  </style>
+</head>
+
+<body class="w-screen h-screen relative bg-theme-royal transition-all duration-1000 overflow-hidden" id="main-body">
+
+  <!-- Canvas Interactive Animation Background -->
+  <canvas id="particle-canvas" class="absolute inset-0 w-full h-full pointer-events-none opacity-60 z-0"></canvas>
+
+  <main class="relative z-10 w-full h-full flex flex-col justify-between p-8 md:p-12 lg:p-14">
+
+    <!-- HEADER: BRANDING & DIGITAL CLOCK -->
+    <header class="flex items-center justify-between w-full shrink-0">
+      <div class="flex items-center space-x-4">
+        <div id="host-logo-wrapper" class="px-5 py-2.5 rounded-2xl bg-white/10 border border-white/20 backdrop-blur-md flex items-center space-x-3.5 shadow-lg">
+          <img id="host-logo-img" src="" alt="Logo Perusahaan" class="h-9 w-auto object-contain hidden">
+          <i id="host-logo-icon" class="fa-solid fa-building-user text-amber-400 text-xl"></i>
+          <span id="host-name-preview" class="font-bold text-sm md:text-base tracking-widest text-white uppercase">PT. MAHAKARYA STAMPING JAYA</span>
+        </div>
+      </div>
+
+      <!-- Real-time Clock Widget -->
+      <div class="flex flex-col items-end text-right">
+        <div id="clock-date" class="text-xs md:text-sm font-semibold tracking-wider text-slate-300 uppercase mb-1">
+          MINGGU, 30-08-2026
+        </div>
+        <span id="clock-time" class="text-3xl md:text-4xl font-extrabold tracking-tight text-white leading-none drop-shadow-md">
+          11:10:12
+        </span>
+      </div>
+    </header>
+
+    <!-- MAIN WELCOME CONTENT AREA -->
+    <section class="my-auto py-6 flex flex-col items-center text-center animate-enter overflow-y-auto max-h-[calc(100vh-200px)] px-4">
+      
+      <!-- Subheading Badge -->
+      <div class="inline-flex items-center px-7 py-2 rounded-full bg-white/10 border border-white/20 backdrop-blur-md mb-4 shrink-0 shadow-lg">
+        <span id="welcome-subheading" class="text-xs md:text-sm font-black tracking-[0.25em] text-amber-300 uppercase">
+          SALAM HANGAT & SELAMAT DATANG
+        </span>
+      </div>
+
+      <!-- Agenda Topic -->
+      <p id="guest-purpose" class="text-lg md:text-2xl text-slate-200 font-medium mb-10 max-w-4xl tracking-wide shrink-0 drop-shadow-lg">
+        Agenda: Pembahasan Kerja Sama Strategis & Silaturahmi Bisnis
+      </p>
+
+      <!-- Dynamic Multi-Company Guests Grid Container -->
+      <div id="multi-company-container" class="w-full max-w-6xl space-y-10">
+        <!-- Dynamic PT and Guest Cards Injected via JS -->
+      </div>
+    </section>
+
+    <!-- FOOTER: SAFETY INDUCTION & RUNNING TEXT -->
+    <footer class="w-full shrink-0">
+      <div class="rounded-2xl px-6 py-3.5 flex items-center overflow-hidden relative border border-white/20 bg-black/40 backdrop-blur-md shadow-2xl">
+        <div id="safety-badge" class="flex items-center space-x-2 text-amber-300 text-xs font-black px-4 py-1.5 rounded-xl bg-white/10 border border-white/20 mr-5 uppercase tracking-wider shrink-0 shadow-md">
+          <i class="fa-solid fa-shield-halved text-amber-400"></i>
+          <span>SAFETY INDUCTION</span>
+        </div>
+        <div class="relative w-full overflow-hidden whitespace-nowrap">
+          <div id="marquee-text" class="animate-marquee font-semibold text-slate-100 text-xs md:text-sm tracking-wide">
+            Selamat datang di gedung kami. Demi keselamatan bersama, harap perhatikan jalur evakuasi dan denah darurat di sekitar area Anda • Bila terjadi keadaan darurat, ikuti petunjuk menuju Titik Kumpul (Assembly Point) • Terima kasih atas kunjungan Anda.
+          </div>
+        </div>
+      </div>
+    </footer>
+  </main>
+
+  <!-- QUICK CONTROLS -->
+  <div id="quick-controls-container" class="fixed bottom-6 right-6 z-40 flex items-center space-x-3">
+    <button id="toggle-fullscreen-btn" onclick="toggleFullscreen()" class="w-12 h-12 rounded-full bg-slate-900/80 text-white border border-white/20 shadow-2xl flex items-center justify-center hover:bg-amber-500 hover:text-slate-950 hover:scale-110 transition-all opacity-40 hover:opacity-100" title="Layar Penuh">
+      <i id="fullscreen-icon" class="fa-solid fa-expand text-base"></i>
+    </button>
+    <button id="open-settings-btn" class="w-12 h-12 rounded-full bg-slate-900/80 text-white border border-white/20 shadow-2xl flex items-center justify-center hover:bg-amber-500 hover:text-slate-950 hover:scale-110 transition-all opacity-40 hover:opacity-100" title="Panel Kontrol">
+      <i class="fa-solid fa-sliders text-base"></i>
+    </button>
+  </div>
+
+  <!-- ADMIN CONTROL PANEL MODAL -->
+  <div id="admin-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden items-center justify-center p-4">
+    <div class="glass-panel w-full max-w-4xl max-h-[90vh] rounded-3xl overflow-hidden shadow-2xl flex flex-col border border-white/20">
+
+      <div class="px-6 py-4 border-b border-white/10 flex items-center justify-between bg-white/5 shrink-0">
+        <div class="flex items-center space-x-3">
+          <div class="w-9 h-9 rounded-xl bg-amber-500/20 flex items-center justify-center text-amber-400 font-bold border border-amber-500/30">
+            <i class="fa-solid fa-tv text-sm"></i>
+          </div>
+          <h2 class="text-base font-bold text-white">Panel Kontrol Display TV Lobby</h2>
+        </div>
+        <button id="close-settings-btn" class="w-8 h-8 rounded-xl bg-white/10 hover:bg-red-500/20 text-slate-300 hover:text-red-400 flex items-center justify-center transition-colors">
+          <i class="fa-solid fa-xmark text-sm"></i>
+        </button>
+      </div>
+
+      <div class="flex-1 overflow-y-auto p-6 space-y-6">
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-white/5 p-4 rounded-2xl border border-white/10">
+          
+          <div class="space-y-3">
+            <h3 class="text-xs font-bold text-amber-300 uppercase tracking-wider flex items-center space-x-2">
+              <i class="fa-solid fa-circle-info"></i>
+              <span>Informasi Acara</span>
+            </h3>
+
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-300 mb-1">Teks Sambutan Utama</label>
+              <input type="text" id="input-welcome-sub" class="w-full bg-slate-900/90 border border-white/20 rounded-xl px-3.5 py-2 text-white text-xs focus:outline-none focus:border-amber-400">
+            </div>
+
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-300 mb-1">Agenda Kunjungan</label>
+              <input type="text" id="input-guest-purpose" class="w-full bg-slate-900/90 border border-white/20 rounded-xl px-3.5 py-2 text-white text-xs focus:outline-none focus:border-amber-400">
+            </div>
+          </div>
+
+          <div class="space-y-3">
+            <h3 class="text-xs font-bold text-amber-300 uppercase tracking-wider flex items-center space-x-2">
+              <i class="fa-solid fa-palette"></i>
+              <span>Branding & Tema Visual Kontras</span>
+            </h3>
+
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-300 mb-1">Nama Perusahaan Anda</label>
+              <input type="text" id="input-host-name" class="w-full bg-slate-900/90 border border-white/20 rounded-xl px-3.5 py-2 text-white text-xs focus:outline-none focus:border-amber-400">
+            </div>
+
+            <!-- Upload Logo Perusahaan -->
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-300 mb-1">Logo Perusahaan Anda</label>
+              <div class="flex items-center space-x-3 bg-slate-900/90 border border-white/20 rounded-xl p-2">
+                <div id="modal-logo-preview" class="w-8 h-8 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center shrink-0 overflow-hidden">
+                  <i id="modal-logo-icon" class="fa-solid fa-image text-slate-400 text-xs"></i>
+                  <img id="modal-logo-img" src="" class="w-full h-full object-contain hidden" alt="Preview Logo">
+                </div>
+                <div class="flex-1 min-w-0">
+                  <label for="input-host-logo" class="cursor-pointer inline-flex items-center space-x-1.5 px-3 py-1 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 text-xs font-semibold border border-amber-400/30 transition-colors">
+                    <i class="fa-solid fa-upload"></i>
+                    <span>Pilih Logo</span>
+                  </label>
+                  <input type="file" id="input-host-logo" accept="image/*" class="hidden">
+                </div>
+                <button type="button" onclick="removeHostLogo()" id="btn-remove-logo" class="px-2 py-1 rounded-lg bg-red-500/10 hover:bg-red-500/25 text-red-400 text-xs font-semibold transition-colors hidden">
+                  <i class="fa-solid fa-trash-can"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Pilihan Tema -->
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-300 mb-1.5">Pilih Tema & Animasi Latar</label>
+              <div class="grid grid-cols-2 gap-2">
+                <button type="button" onclick="selectTheme('royal')" class="p-2.5 rounded-xl bg-[#0b132b] border border-amber-400/40 text-left transition-all hover:scale-[1.02]">
+                  <div class="text-[11px] text-amber-300 font-bold">1. Midnight Royal</div>
+                  <div class="text-[9px] text-slate-400">Navy Dark + Sparkling Stars</div>
+                </button>
+                <button type="button" onclick="selectTheme('emerald')" class="p-2.5 rounded-xl bg-[#05241b] border border-emerald-400/40 text-left transition-all hover:scale-[1.02]">
+                  <div class="text-[11px] text-emerald-300 font-bold">2. Emerald Luxury</div>
+                  <div class="text-[9px] text-slate-400">Emerald Dark + Glow Waves</div>
+                </button>
+                <button type="button" onclick="selectTheme('slate')" class="p-2.5 rounded-xl bg-[#0f172a] border border-sky-400/40 text-left transition-all hover:scale-[1.02]">
+                  <div class="text-[11px] text-sky-300 font-bold">3. Corporate Slate</div>
+                  <div class="text-[9px] text-slate-400">Slate Metalic + Cyber Grid</div>
+                </button>
+                <button type="button" onclick="selectTheme('amethyst')" class="p-2.5 rounded-xl bg-[#170b24] border border-pink-400/40 text-left transition-all hover:scale-[1.02]">
+                  <div class="text-[11px] text-pink-300 font-bold">4. Deep Amethyst</div>
+                  <div class="text-[9px] text-slate-400">Violet Dark + Glowing Orbs</div>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-xs font-bold text-amber-300 uppercase tracking-wider flex items-center space-x-2">
+              <i class="fa-solid fa-building"></i>
+              <span>Daftar PT Tamu & Delegasi</span>
+            </h3>
+            <button onclick="addCompanyBlock()" class="px-3.5 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-xs font-bold text-slate-950 flex items-center space-x-1">
+              <i class="fa-solid fa-plus-circle"></i>
+              <span>Tambah PT Baru</span>
+            </button>
+          </div>
+
+          <div id="company-form-list" class="space-y-4"></div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1">Running Text (Safety Induction & Info)</label>
+          <textarea id="input-marquee-text" rows="2" class="w-full bg-slate-900/90 border border-white/20 rounded-xl px-3.5 py-2 text-white text-xs focus:outline-none focus:border-amber-400"></textarea>
+        </div>
+
+      </div>
+
+      <div class="px-6 py-3.5 bg-white/5 border-t border-white/10 flex items-center justify-end shrink-0">
+        <button onclick="saveAndApply()" class="px-6 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-xs font-bold text-slate-950 transition-all shadow-lg shadow-amber-500/20">
+          Terapkan ke Layar TV
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    const DEFAULT_CONFIG = {
+      theme: 'royal',
+      hostName: 'PT. MAHAKARYA STAMPING JAYA',
+      hostLogo: '',
+      welcomeSub: 'SALAM HANGAT & SELAMAT DATANG',
+      purpose: 'Agenda: Pembahasan Kerja Sama Strategis & Silaturahmi Bisnis',
+      marquee: 'Selamat datang di gedung kami. Demi keselamatan bersama, harap perhatikan jalur evakuasi dan denah darurat di sekitar area Anda • Bila terjadi keadaan darurat, ikuti petunjuk menuju Titik Kumpul (Assembly Point) • Terima kasih atas kunjungan Anda.',
+      companies: [
+        {
+          companyName: 'PT. INTI MEGAH NUSANTARA',
+          logo: '',
+          guests: [
+            { name: 'Bpk. Ir. H. Bambang Sujatmiko, M.Sc', title: 'President Director' },
+            { name: 'Ibu Rina Oktaviani, S.E', title: 'VP of Operations' }
+          ]
+        },
+        {
+          companyName: 'PT. SOLUSI TEKNOLOGI GLOBAL',
+          logo: '',
+          guests: [
+            { name: 'Bpk. Dimas Pratama, S.T', title: 'Head of Business Development' },
+            { name: 'Ibu Anita Wijaya, M.T', title: 'Senior IT Consultant' }
+          ]
+        }
+      ]
+    };
+
+    let currentHostLogoBase64 = '';
+    
+    // Auto clear cache jika masih membawa string lama
+    let appState = JSON.parse(localStorage.getItem('welcome_display_data'));
+    if (!appState || !appState.marquee || appState.marquee.includes('VIP Lounge')) {
+      appState = DEFAULT_CONFIG;
+      localStorage.setItem('welcome_display_data', JSON.stringify(appState));
+    }
+
+    /* REAL-TIME CLOCK */
+    function updateClock() {
+      const now = new Date();
+      const days = ['MINGGU', 'SENIN', 'SELASA', 'RABU', 'KAMIS', 'JUMAT', 'SABTU'];
+      const dayName = days[now.getDay()];
+      const dd = String(now.getDate()).padStart(2, '0');
+      const mm = String(now.getMonth() + 1).padStart(2, '0');
+      const year = now.getFullYear();
+
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const seconds = String(now.getSeconds()).padStart(2, '0');
+
+      document.getElementById('clock-date').textContent = `${dayName}, ${dd}-${mm}-${year}`;
+      document.getElementById('clock-time').textContent = `${hours}:${minutes}:${seconds}`;
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    /* RENDER DISPLAY LOGIC */
+    function renderDisplay() {
+      const body = document.getElementById('main-body');
+      const activeTheme = appState.theme || 'royal';
+      
+      body.className = `w-screen h-screen relative bg-theme-${activeTheme} transition-all duration-1000 overflow-hidden`;
+
+      // Update Host Logo
+      const logoImg = document.getElementById('host-logo-img');
+      const logoIcon = document.getElementById('host-logo-icon');
+
+      if (appState.hostLogo) {
+        logoImg.src = appState.hostLogo;
+        logoImg.classList.remove('hidden');
+        logoIcon.classList.add('hidden');
+      } else {
+        logoImg.src = '';
+        logoImg.classList.add('hidden');
+        logoIcon.classList.remove('hidden');
+      }
+
+      document.getElementById('host-name-preview').textContent = appState.hostName || 'NAMA PERUSAHAAN';
+      document.getElementById('welcome-subheading').textContent = appState.welcomeSub;
+      document.getElementById('guest-purpose').textContent = appState.purpose;
+      document.getElementById('marquee-text').textContent = appState.marquee;
+
+      // Dynamic Color Accents based on Theme
+      let titleGradient = 'from-amber-200 via-yellow-300 to-amber-500';
+      let avatarGradient = 'from-amber-500 to-yellow-300';
+      let borderAccent = 'border-amber-400/30';
+
+      if (activeTheme === 'emerald') {
+        titleGradient = 'from-emerald-100 via-emerald-300 to-yellow-300';
+        avatarGradient = 'from-emerald-400 to-yellow-300';
+        borderAccent = 'border-emerald-400/30';
+      } else if (activeTheme === 'slate') {
+        titleGradient = 'from-sky-100 via-sky-300 to-blue-400';
+        avatarGradient = 'from-sky-400 to-blue-500';
+        borderAccent = 'border-sky-400/30';
+      } else if (activeTheme === 'amethyst') {
+        titleGradient = 'from-pink-100 via-pink-300 to-purple-300';
+        avatarGradient = 'from-pink-400 to-purple-400';
+        borderAccent = 'border-pink-400/30';
+      }
+
+      const multiContainer = document.getElementById('multi-company-container');
+      multiContainer.innerHTML = '';
+
+      if (appState.companies && appState.companies.length > 0) {
+        appState.companies.forEach((comp, cIdx) => {
+          const compSection = document.createElement('div');
+          compSection.className = 'w-full space-y-4 animate-enter';
+
+          const hasGuests = comp.guests && comp.guests.length > 0;
+
+          compSection.innerHTML = `
+            <div class="flex items-center justify-center space-x-4">
+              ${comp.logo ? `<img src="${comp.logo}" alt="Logo PT" class="h-10 md:h-14 w-auto object-contain drop-shadow-md">` : ''}
+              <h2 class="text-3xl md:text-5xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r ${titleGradient} drop-shadow-lg">
+                ${escapeHtml(comp.companyName || 'NAMA PERUSAHAAN TAMU')}
+              </h2>
+            </div>
+            ${hasGuests ? `<div class="flex flex-wrap justify-center items-center gap-5 pt-1" id="company-guests-grid-${cIdx}"></div>` : ''}
+          `;
+
+          multiContainer.appendChild(compSection);
+
+          if (hasGuests) {
+            const guestsGrid = document.getElementById(`company-guests-grid-${cIdx}`);
+            comp.guests.forEach((guest) => {
+              const card = document.createElement('div');
+              card.className = `glass-card rounded-2xl p-4 px-6 flex items-center justify-start space-x-4 border ${borderAccent} shadow-2xl transition-all duration-300 min-w-[300px] max-w-[420px] text-left`;
+              
+              const initials = getInitials(guest.name);
+
+              card.innerHTML = `
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-tr ${avatarGradient} flex items-center justify-center text-slate-950 font-extrabold text-sm shrink-0 shadow-lg">
+                  ${initials}
+                </div>
+                <div class="overflow-hidden">
+                  <h4 class="font-bold text-white text-sm md:text-base leading-snug truncate">
+                    ${escapeHtml(guest.name)}
+                  </h4>
+                  <p class="text-xs text-slate-300 font-semibold truncate mt-0.5 uppercase tracking-wider">
+                    ${escapeHtml(guest.title || 'Delegasi Tamu')}
+                  </p>
+                </div>
+              `;
+              guestsGrid.appendChild(card);
+            });
+          }
+        });
+      }
+
+      initThemeParticles(activeTheme);
+    }
+
+    function getInitials(name) {
+      if (!name) return 'G';
+      const cleanName = name.replace(/(Bpk|Ibu|Ir|H|S\.E|M\.Sc|S\.T|M\.T|\.)/g, '').trim();
+      const parts = cleanName.split(' ').filter(Boolean);
+      if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
+      return cleanName.slice(0, 2).toUpperCase() || 'G';
+    }
+
+    function escapeHtml(text) {
+      if (!text) return '';
+      return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+    }
+
+    /* ADMIN CONTROLS */
+    const adminModal = document.getElementById('admin-modal');
+    document.getElementById('open-settings-btn').addEventListener('click', () => {
+      populateForm();
+      adminModal.classList.remove('hidden');
+      adminModal.classList.add('flex');
+    });
+    document.getElementById('close-settings-btn').addEventListener('click', () => {
+      adminModal.classList.add('hidden');
+      adminModal.classList.remove('flex');
+    });
+
+    document.getElementById('input-host-logo').addEventListener('change', function (e) {
+      const file = e.target.files[0];
+      if (file) {
+        if (file.size > 2 * 1024 * 1024) {
+          alert('Ukuran gambar terlalu besar. Maksimal 2MB.');
+          return;
+        }
+        const reader = new FileReader();
+        reader.onload = function (evt) {
+          currentHostLogoBase64 = evt.target.result;
+          updateModalLogoPreview(currentHostLogoBase64);
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    function updateModalLogoPreview(src) {
+      const img = document.getElementById('modal-logo-img');
+      const icon = document.getElementById('modal-logo-icon');
+      const removeBtn = document.getElementById('btn-remove-logo');
+
+      if (src) {
+        img.src = src;
+        img.classList.remove('hidden');
+        icon.classList.add('hidden');
+        removeBtn.classList.remove('hidden');
+      } else {
+        img.src = '';
+        img.classList.add('hidden');
+        icon.classList.remove('hidden');
+        removeBtn.classList.add('hidden');
+      }
+    }
+
+    function removeHostLogo() {
+      currentHostLogoBase64 = '';
+      document.getElementById('input-host-logo').value = '';
+      updateModalLogoPreview('');
+    }
+
+    function selectTheme(themeName) {
+      appState.theme = themeName;
+      renderDisplay();
+    }
+
+    function populateForm() {
+      document.getElementById('input-host-name').value = appState.hostName || '';
+      document.getElementById('input-welcome-sub').value = appState.welcomeSub || '';
+      document.getElementById('input-guest-purpose').value = appState.purpose || '';
+      document.getElementById('input-marquee-text').value = appState.marquee || '';
+
+      currentHostLogoBase64 = appState.hostLogo || '';
+      updateModalLogoPreview(currentHostLogoBase64);
+
+      const formContainer = document.getElementById('company-form-list');
+      formContainer.innerHTML = '';
+
+      if (appState.companies && appState.companies.length > 0) {
+        appState.companies.forEach((comp) => addCompanyBlock(comp.companyName, comp.guests, comp.logo));
+      } else {
+        addCompanyBlock('', [], '');
+      }
+    }
+
+    function addCompanyBlock(companyName = '', guests = [], logo = '') {
+      const formContainer = document.getElementById('company-form-list');
+      const compId = 'comp-block-' + Date.now() + '-' + Math.floor(Math.random() * 1000);
+
+      const block = document.createElement('div');
+      block.className = 'company-block bg-slate-900/90 p-4 rounded-2xl border border-white/10 space-y-3';
+      block.id = compId;
+
+      block.innerHTML = `
+        <div class="flex flex-col gap-2 pb-2 border-b border-white/10">
+          <div class="flex items-center justify-between gap-3">
+            <input type="text" placeholder="Nama PT Tamu" value="${escapeHtml(companyName)}" class="company-name-input flex-1 bg-slate-950 border border-white/20 rounded-xl px-3 py-1.5 text-xs font-bold text-white">
+            <button type="button" onclick="document.getElementById('${compId}').remove()" class="px-2.5 py-1 rounded-lg bg-red-500/10 hover:bg-red-500/25 text-red-400 text-xs font-semibold">Hapus PT</button>
+          </div>
+          <div class="flex items-center space-x-3 bg-slate-950/60 p-2 rounded-xl border border-white/10">
+            <div class="w-7 h-7 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center shrink-0 overflow-hidden">
+              <img src="${logo || ''}" class="company-logo-img w-full h-full object-contain ${logo ? '' : 'hidden'}" alt="Logo">
+              <i class="company-logo-icon fa-solid fa-image text-slate-400 text-xs ${logo ? 'hidden' : ''}"></i>
+            </div>
+            <div class="flex-1 min-w-0 flex items-center space-x-2">
+              <label class="cursor-pointer inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 text-[10px] font-semibold border border-amber-400/30 transition-colors">
+                <i class="fa-solid fa-upload"></i>
+                <span>Upload Logo PT Tamu</span>
+                <input type="file" accept="image/*" class="company-logo-input hidden" onchange="handleCompanyLogoUpload(this, '${compId}')">
+              </label>
+              <button type="button" onclick="removeCompanyLogo('${compId}')" class="company-logo-remove px-2 py-1 rounded-lg bg-red-500/10 hover:bg-red-500/25 text-red-400 text-[10px] font-semibold transition-colors ${logo ? '' : 'hidden'}">
+                <i class="fa-solid fa-trash-can"></i>
+              </button>
+            </div>
+            <input type="hidden" class="company-logo-data" value="${logo || ''}">
+          </div>
+        </div>
+        <div class="space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-[11px] font-semibold text-slate-300">Delegasi Pejabat:</span>
+            <button type="button" onclick="addGuestInputRow('${compId}')" class="px-2 py-1 rounded-lg bg-amber-500/20 text-amber-300 text-[10px] font-semibold">+ Tambah Orang</button>
+          </div>
+          <div class="company-guests-list space-y-2"></div>
+        </div>
+      `;
+
+      formContainer.appendChild(block);
+
+      if (guests && guests.length > 0) {
+        guests.forEach(g => addGuestInputRow(compId, g.name, g.title));
+      } else {
+        addGuestInputRow(compId, '', '');
+      }
+    }
+
+    function addGuestInputRow(compId, name = '', title = '') {
+      const compBlock = document.getElementById(compId);
+      if (!compBlock) return;
+
+      const guestsListContainer = compBlock.querySelector('.company-guests-list');
+      const row = document.createElement('div');
+      row.className = 'guest-row flex items-center space-x-2 bg-slate-950/70 p-2 rounded-xl border border-white/10';
+
+      row.innerHTML = `
+        <input type="text" placeholder="Nama & Gelar" value="${escapeHtml(name)}" class="guest-name flex-1 bg-slate-900 border border-white/10 rounded-lg px-2.5 py-1 text-xs text-white">
+        <input type="text" placeholder="Jabatan" value="${escapeHtml(title)}" class="guest-title w-1/3 bg-slate-900 border border-white/10 rounded-lg px-2.5 py-1 text-xs text-slate-300">
+        <button type="button" onclick="this.parentElement.remove()" class="w-6 h-6 rounded-lg bg-red-500/10 text-red-400 text-xs">✕</button>
+      `;
+
+      guestsListContainer.appendChild(row);
+    }
+
+    function handleCompanyLogoUpload(inputElement, compId) {
+      const file = inputElement.files[0];
+      if (file) {
+        if (file.size > 2 * 1024 * 1024) {
+          alert('Ukuran gambar terlalu besar. Maksimal 2MB.');
+          return;
+        }
+        const reader = new FileReader();
+        reader.onload = function (evt) {
+          const base64Str = evt.target.result;
+          const block = document.getElementById(compId);
+          if (block) {
+            block.querySelector('.company-logo-data').value = base64Str;
+            const img = block.querySelector('.company-logo-img');
+            const icon = block.querySelector('.company-logo-icon');
+            const removeBtn = block.querySelector('.company-logo-remove');
+            img.src = base64Str;
+            img.classList.remove('hidden');
+            icon.classList.add('hidden');
+            removeBtn.classList.remove('hidden');
+          }
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function removeCompanyLogo(compId) {
+      const block = document.getElementById(compId);
+      if (block) {
+        block.querySelector('.company-logo-data').value = '';
+        block.querySelector('.company-logo-input').value = '';
+        const img = block.querySelector('.company-logo-img');
+        const icon = block.querySelector('.company-logo-icon');
+        const removeBtn = block.querySelector('.company-logo-remove');
+        img.src = '';
+        img.classList.add('hidden');
+        icon.classList.remove('hidden');
+        removeBtn.classList.add('hidden');
+      }
+    }
+
+    function saveAndApply() {
+      appState.hostName = document.getElementById('input-host-name').value;
+      appState.hostLogo = currentHostLogoBase64;
+      appState.welcomeSub = document.getElementById('input-welcome-sub').value;
+      appState.purpose = document.getElementById('input-guest-purpose').value;
+      appState.marquee = document.getElementById('input-marquee-text').value;
+
+      const compBlocks = document.querySelectorAll('.company-block');
+      const companies = [];
+
+      compBlocks.forEach(block => {
+        const companyName = block.querySelector('.company-name-input').value.trim();
+        const logo = block.querySelector('.company-logo-data').value;
+        const guestRows = block.querySelectorAll('.guest-row');
+        const guests = [];
+
+        guestRows.forEach(gRow => {
+          const name = gRow.querySelector('.guest-name').value.trim();
+          const title = gRow.querySelector('.guest-title').value.trim();
+          if (name) guests.push({ name, title });
+        });
+
+        if (companyName || guests.length > 0 || logo) {
+          companies.push({ companyName: companyName || 'PT TAMU', logo, guests });
+        }
+      });
+
+      appState.companies = companies;
+      localStorage.setItem('welcome_display_data', JSON.stringify(appState));
+      renderDisplay();
+
+      adminModal.classList.add('hidden');
+      adminModal.classList.remove('flex');
+    }
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        document.exitFullscreen().catch(() => {});
+      }
+    }
+
+    /* PER-THEME CANVAS ANIMATION ENGINE */
+    const canvas = document.getElementById('particle-canvas');
+    const ctx = canvas.getContext('2d');
+    let particlesArray = [];
+    let currentThemeName = 'royal';
+    let animFrameId = null;
+    let animTime = 0;
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    class ThemeParticle {
+      constructor(theme) {
+        this.theme = theme;
+        this.reset();
+      }
+
+      reset() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 3 + 1.5;
+        this.speedY = -Math.random() * 0.4 - 0.1;
+        this.speedX = (Math.random() - 0.5) * 0.2;
+        this.opacity = Math.random() * 0.6 + 0.2;
+        this.pulse = Math.random() * 0.02 + 0.01;
+      }
+
+      update() {
+        if (this.theme === 'royal') {
+          this.y += this.speedY;
+          this.opacity += Math.sin(animTime * this.pulse) * 0.02;
+          if (this.opacity < 0.1) this.opacity = 0.1;
+          if (this.opacity > 0.8) this.opacity = 0.8;
+          if (this.y < -10) this.reset();
+        } else if (this.theme === 'emerald') {
+          this.y += this.speedY * 0.7;
+          this.x += Math.sin(animTime * 0.01 + this.y) * 0.3;
+          if (this.y < -10) this.reset();
+        } else if (this.theme === 'slate') {
+          this.y += this.speedY * 1.2;
+          if (this.y < -10) this.reset();
+        } else if (this.theme === 'amethyst') {
+          this.size = Math.random() * 5 + 3;
+          this.y += this.speedY * 0.5;
+          if (this.y < -10) this.reset();
+        }
+      }
+
+      draw() {
+        ctx.save();
+        if (this.theme === 'royal') {
+          ctx.fillStyle = `rgba(244, 208, 63, ${this.opacity})`;
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+          ctx.fill();
+        } else if (this.theme === 'emerald') {
+          ctx.fillStyle = `rgba(247, 208, 112, ${this.opacity})`;
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.size * 1.2, 0, Math.PI * 2);
+          ctx.fill();
+        } else if (this.theme === 'slate') {
+          ctx.fillStyle = `rgba(56, 189, 248, ${this.opacity})`;
+          ctx.fillRect(this.x, this.y, this.size * 1.5, this.size * 1.5);
+        } else if (this.theme === 'amethyst') {
+          ctx.fillStyle = `rgba(244, 114, 182, ${this.opacity * 0.7})`;
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.size * 1.8, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.restore();
+      }
+    }
+
+    function initThemeParticles(theme) {
+      currentThemeName = theme;
+      particlesArray = [];
+      const count = theme === 'amethyst' ? 25 : 45;
+      for (let i = 0; i < count; i++) {
+        particlesArray.push(new ThemeParticle(theme));
+      }
+    }
+
+    function renderCanvasAnimation() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      animTime += 1;
+
+      if (currentThemeName === 'emerald') {
+        ctx.save();
+        ctx.strokeStyle = 'rgba(247, 208, 112, 0.05)';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(0, canvas.height * 0.7);
+        ctx.quadraticCurveTo(canvas.width * 0.5, canvas.height * 0.6 + Math.sin(animTime * 0.01) * 30, canvas.width, canvas.height * 0.75);
+        ctx.stroke();
+        ctx.restore();
+      } else if (currentThemeName === 'slate') {
+        ctx.save();
+        ctx.strokeStyle = 'rgba(56, 189, 248, 0.04)';
+        ctx.lineWidth = 1;
+        const gridStep = 80;
+        for (let x = 0; x < canvas.width; x += gridStep) {
+          ctx.beginPath();
+          ctx.moveTo(x, 0);
+          ctx.lineTo(x, canvas.height);
+          ctx.stroke();
+        }
+        ctx.restore();
+      }
+
+      particlesArray.forEach(p => {
+        p.update();
+        p.draw();
+      });
+
+      animFrameId = requestAnimationFrame(renderCanvasAnimation);
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      renderDisplay();
+      renderCanvasAnimation();
+    });
+  </script>
+</body>
+
+</html>
