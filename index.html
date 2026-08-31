@@ -3,8 +3,8 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lobby Welcome Display System - Realtime Sync & TV Auto-Scale</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Lobby Welcome Display System - Enterprise Auto-Fit & Multi-Device Sync</title>
 
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -29,23 +29,29 @@
   </script>
 
   <style>
+    html,
     body {
+      width: 100vw;
+      height: 100vh;
+      margin: 0;
+      padding: 0;
+      overflow: hidden !important;
       font-family: 'Plus Jakarta Sans', sans-serif;
-      overflow: hidden;
       background-color: #050811;
       color: #ffffff;
       user-select: none;
     }
 
-    /* Auto-Scaling TV Viewport Container */
-    #tv-viewport {
-      width: 100vw;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      transition: transform 0.3s ease-out;
-      transform-origin: center center;
+    /* Hide All Scrollbars for Clean TV Display */
+    ::-webkit-scrollbar {
+      display: none;
+      width: 0;
+      height: 0;
+    }
+
+    * {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
     }
 
     /* Themes Background Gradients */
@@ -68,9 +74,9 @@
     /* High Contrast Glassmorphism Card */
     .glass-card {
       background: rgba(255, 255, 255, 0.05);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
     }
 
     .glass-panel {
@@ -80,7 +86,7 @@
       border: 1px solid rgba(255, 255, 255, 0.15);
     }
 
-    /* Staggered Entrance Animation */
+    /* Smooth Entrance Animation */
     .animate-enter {
       animation: fadeInScale 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
@@ -88,7 +94,7 @@
     @keyframes fadeInScale {
       from {
         opacity: 0;
-        transform: translateY(20px) scale(0.98);
+        transform: translateY(15px) scale(0.98);
       }
 
       to {
@@ -117,6 +123,12 @@
     .animate-marquee:hover {
       animation-play-state: paused;
     }
+
+    /* Dynamic Clamp Text Sizing for TV */
+    .tv-title-clamp {
+      font-size: clamp(1.75rem, 3.5vw, 3.25rem);
+      line-height: 1.15;
+    }
   </style>
 </head>
 
@@ -125,68 +137,70 @@
   <!-- Interactive Canvas Background -->
   <canvas id="particle-canvas" class="absolute inset-0 w-full h-full pointer-events-none opacity-60 z-0"></canvas>
 
-  <!-- Auto-Proportional TV Container -->
-  <main id="tv-viewport" class="relative z-10 p-8 md:p-12 lg:p-14">
+  <main class="relative z-10 w-full h-full flex flex-col justify-between p-6 md:p-10 lg:p-12 overflow-hidden">
 
     <!-- HEADER: BRANDING & DIGITAL CLOCK -->
-    <header class="flex items-center justify-between w-full shrink-0">
+    <header class="flex items-center justify-between w-full shrink-0 h-16">
       <div class="flex items-center space-x-4">
         <div id="host-logo-wrapper"
-          class="px-5 py-2.5 rounded-2xl bg-white/10 border border-white/20 backdrop-blur-md flex items-center space-x-3.5 shadow-lg">
-          <img id="host-logo-img" src="" alt="Logo Perusahaan" class="h-9 w-auto object-contain hidden">
-          <i id="host-logo-icon" class="fa-solid fa-building-user text-amber-400 text-xl"></i>
-          <span id="host-name-preview" class="font-bold text-sm md:text-base tracking-widest text-white uppercase">PT.
+          class="px-4 py-2 rounded-2xl bg-white/10 border border-white/20 backdrop-blur-md flex items-center space-x-3 shadow-lg">
+          <img id="host-logo-img" src="" alt="Logo Perusahaan" class="h-8 w-auto object-contain hidden">
+          <i id="host-logo-icon" class="fa-solid fa-building-user text-amber-400 text-lg"></i>
+          <span id="host-name-preview" class="font-bold text-xs md:text-sm tracking-widest text-white uppercase">PT.
             MAHAKARYA STAMPING JAYA</span>
         </div>
       </div>
 
       <!-- Real-time Clock Widget -->
       <div class="flex flex-col items-end text-right">
-        <div id="clock-date" class="text-xs md:text-sm font-semibold tracking-wider text-slate-300 uppercase mb-1">
+        <div id="clock-date"
+          class="text-[11px] md:text-xs font-semibold tracking-wider text-slate-300 uppercase mb-0.5">
           MINGGU, 30-08-2026
         </div>
         <span id="clock-time"
-          class="text-3xl md:text-4xl font-extrabold tracking-tight text-white leading-none drop-shadow-md">
+          class="text-2xl md:text-3xl font-extrabold tracking-tight text-white leading-none drop-shadow-md">
           11:10:12
         </span>
       </div>
     </header>
 
-    <!-- MAIN WELCOME CONTENT AREA -->
+    <!-- MAIN WELCOME CONTENT AREA (AUTO FIT WITHOUT SCROLL) -->
     <section
-      class="my-auto py-6 flex flex-col items-center text-center animate-enter overflow-y-auto max-h-[calc(100vh-200px)] px-4">
+      class="my-auto py-2 flex flex-col items-center justify-center text-center animate-enter flex-1 overflow-hidden">
 
       <!-- Subheading Badge -->
       <div
-        class="inline-flex items-center px-7 py-2 rounded-full bg-white/10 border border-white/20 backdrop-blur-md mb-4 shrink-0 shadow-lg">
-        <span id="welcome-subheading" class="text-xs md:text-sm font-black tracking-[0.25em] text-amber-300 uppercase">
+        class="inline-flex items-center px-6 py-1.5 rounded-full bg-white/10 border border-white/20 backdrop-blur-md mb-3 shrink-0 shadow-lg">
+        <span id="welcome-subheading"
+          class="text-[11px] md:text-xs font-black tracking-[0.25em] text-amber-300 uppercase">
           SALAM HANGAT & SELAMAT DATANG
         </span>
       </div>
 
       <!-- Agenda Topic -->
       <p id="guest-purpose"
-        class="text-lg md:text-2xl text-slate-200 font-medium mb-10 max-w-4xl tracking-wide shrink-0 drop-shadow-lg">
+        class="text-base md:text-xl text-slate-200 font-medium mb-6 max-w-4xl tracking-wide shrink-0 drop-shadow-lg truncate">
         Agenda: Pembahasan Kerja Sama Strategis & Silaturahmi Bisnis
       </p>
 
       <!-- Dynamic Multi-Company Guests Grid Container -->
-      <div id="multi-company-container" class="w-full max-w-6xl space-y-10">
+      <div id="multi-company-container"
+        class="w-full max-w-6xl flex flex-col justify-center items-center gap-6 overflow-hidden flex-1 max-h-[calc(100vh-210px)]">
         <!-- Dynamic PT and Guest Cards Injected via JS -->
       </div>
     </section>
 
     <!-- FOOTER: SAFETY INDUCTION & RUNNING TEXT -->
-    <footer class="w-full shrink-0">
+    <footer class="w-full shrink-0 h-14">
       <div
-        class="rounded-2xl px-6 py-3.5 flex items-center overflow-hidden relative border border-white/20 bg-black/40 backdrop-blur-md shadow-2xl">
+        class="rounded-2xl px-5 py-2.5 flex items-center overflow-hidden relative border border-white/20 bg-black/40 backdrop-blur-md shadow-2xl h-full">
         <div id="safety-badge"
-          class="flex items-center space-x-2 text-amber-300 text-xs font-black px-4 py-1.5 rounded-xl bg-white/10 border border-white/20 mr-5 uppercase tracking-wider shrink-0 shadow-md">
+          class="flex items-center space-x-2 text-amber-300 text-[11px] font-black px-3.5 py-1 rounded-xl bg-white/10 border border-white/20 mr-4 uppercase tracking-wider shrink-0 shadow-md">
           <i class="fa-solid fa-shield-halved text-amber-400"></i>
           <span>SAFETY INDUCTION</span>
         </div>
         <div class="relative w-full overflow-hidden whitespace-nowrap">
-          <div id="marquee-text" class="animate-marquee font-semibold text-slate-100 text-xs md:text-sm tracking-wide">
+          <div id="marquee-text" class="animate-marquee font-semibold text-slate-100 text-xs tracking-wide">
             Selamat datang di gedung kami. Demi keselamatan bersama, harap perhatikan jalur evakuasi dan denah darurat
             di sekitar area Anda • Bila terjadi keadaan darurat, ikuti petunjuk menuju Titik Kumpul (Assembly Point) •
             Terima kasih atas kunjungan Anda.
@@ -197,16 +211,16 @@
   </main>
 
   <!-- QUICK CONTROLS -->
-  <div id="quick-controls-container" class="fixed bottom-6 right-6 z-40 flex items-center space-x-3">
+  <div id="quick-controls-container" class="fixed bottom-5 right-5 z-40 flex items-center space-x-2">
     <button id="toggle-fullscreen-btn" onclick="toggleFullscreen()"
-      class="w-12 h-12 rounded-full bg-slate-900/80 text-white border border-white/20 shadow-2xl flex items-center justify-center hover:bg-amber-500 hover:text-slate-950 hover:scale-110 transition-all opacity-40 hover:opacity-100"
+      class="w-10 h-10 rounded-full bg-slate-900/80 text-white border border-white/20 shadow-2xl flex items-center justify-center hover:bg-amber-500 hover:text-slate-950 hover:scale-110 transition-all opacity-30 hover:opacity-100"
       title="Layar Penuh">
-      <i id="fullscreen-icon" class="fa-solid fa-expand text-base"></i>
+      <i id="fullscreen-icon" class="fa-solid fa-expand text-sm"></i>
     </button>
     <button id="open-settings-btn"
-      class="w-12 h-12 rounded-full bg-slate-900/80 text-white border border-white/20 shadow-2xl flex items-center justify-center hover:bg-amber-500 hover:text-slate-950 hover:scale-110 transition-all opacity-40 hover:opacity-100"
+      class="w-10 h-10 rounded-full bg-slate-900/80 text-white border border-white/20 shadow-2xl flex items-center justify-center hover:bg-amber-500 hover:text-slate-950 hover:scale-110 transition-all opacity-30 hover:opacity-100"
       title="Panel Kontrol">
-      <i class="fa-solid fa-sliders text-base"></i>
+      <i class="fa-solid fa-sliders text-sm"></i>
     </button>
   </div>
 
@@ -341,14 +355,14 @@
 
       </div>
 
-      <!-- Modal Footer dengan Tombol Sync khusus untuk Pemicu Layar TV -->
+      <!-- Modal Footer Sync Trigger -->
       <div class="px-6 py-3.5 bg-white/5 border-t border-white/10 flex items-center justify-between shrink-0">
         <div class="text-[11px] text-slate-400 flex items-center space-x-1.5">
           <i class="fa-solid fa-wifi text-emerald-400 animate-pulse"></i>
-          <span>Realtime Sync Active</span>
+          <span>Multi-Device Auto Sync Active</span>
         </div>
         <div class="flex items-center space-x-3">
-          <button onclick="triggerBroadcastSync()"
+          <button onclick="triggerBroadcastSync(event)"
             class="px-5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-xs font-bold text-slate-950 transition-all flex items-center space-x-2 shadow-lg shadow-emerald-500/20">
             <i class="fa-solid fa-rotate"></i>
             <span>Sync / Tembak ke TV</span>
@@ -364,8 +378,9 @@
   </div>
 
   <script>
-    /* REALTIME SYNC ENGINE (BroadcastChannel + Storage Event Trigger) */
+    /* REALTIME MULTI-DEVICE AUTO-POLLING ENGINE */
     const syncChannel = new BroadcastChannel('lobby_display_sync');
+    let lastKnownTimestamp = localStorage.getItem('lobby_sync_timestamp') || '0';
 
     syncChannel.onmessage = (event) => {
       if (event.data && event.data.type === 'SYNC_UPDATE') {
@@ -374,48 +389,39 @@
       }
     };
 
-    window.addEventListener('storage', (e) => {
-      if (e.key === 'welcome_display_data' && e.newValue) {
-        appState = JSON.parse(e.newValue);
-        renderDisplay();
+    // Auto Check Updates Setiap 2 Detik (Mendukung Sync Antar-Perangkat HP/Laptop -> TV)
+    setInterval(() => {
+      const currentRemoteTime = localStorage.getItem('lobby_sync_timestamp');
+      if (currentRemoteTime && currentRemoteTime !== lastKnownTimestamp) {
+        lastKnownTimestamp = currentRemoteTime;
+        const freshData = localStorage.getItem('welcome_display_data');
+        if (freshData) {
+          appState = JSON.parse(freshData);
+          renderDisplay();
+        }
       }
-    });
+    }, 2000);
 
-    function triggerBroadcastSync() {
+    function triggerBroadcastSync(evt) {
       saveStateFromForm();
+      const nowStr = Date.now().toString();
+      lastKnownTimestamp = nowStr;
       localStorage.setItem('welcome_display_data', JSON.stringify(appState));
-      localStorage.setItem('lobby_sync_timestamp', Date.now().toString());
+      localStorage.setItem('lobby_sync_timestamp', nowStr);
       syncChannel.postMessage({ type: 'SYNC_UPDATE', payload: appState });
       renderDisplay();
 
-      const btn = event.currentTarget;
-      const originalText = btn.innerHTML;
-      btn.innerHTML = `<i class="fa-solid fa-check"></i><span>Tersinkron ke TV!</span>`;
-      btn.classList.replace('bg-emerald-500', 'bg-emerald-400');
-      setTimeout(() => {
-        btn.innerHTML = originalText;
-        btn.classList.replace('bg-emerald-400', 'bg-emerald-500');
-      }, 1500);
-    }
-
-    /* PROPORTIONAL TV DISPLAY AUTO-SCALER */
-    function adjustTvScale() {
-      const viewport = document.getElementById('tv-viewport');
-      const baseWidth = 1920;
-      const currentWidth = window.innerWidth;
-
-      if (currentWidth >= 1280) {
-        const scaleFactor = Math.min(Math.max(currentWidth / baseWidth, 0.85), 1.25);
-        viewport.style.transform = `scale(${scaleFactor})`;
-        viewport.style.width = `${100 / scaleFactor}vw`;
-        viewport.style.height = `${100 / scaleFactor}vh`;
-      } else {
-        viewport.style.transform = 'none';
-        viewport.style.width = '100vw';
-        viewport.style.height = '100vh';
+      const btn = evt ? evt.currentTarget : document.querySelector('button[onclick*="triggerBroadcastSync"]');
+      if (btn) {
+        const originalText = btn.innerHTML;
+        btn.innerHTML = `<i class="fa-solid fa-check"></i><span>Tersinkron ke TV!</span>`;
+        btn.classList.replace('bg-emerald-500', 'bg-emerald-400');
+        setTimeout(() => {
+          btn.innerHTML = originalText;
+          btn.classList.replace('bg-emerald-400', 'bg-emerald-500');
+        }, 1500);
       }
     }
-    window.addEventListener('resize', adjustTvScale);
 
     /* SCREEN WAKE LOCK API */
     let wakeLock = null;
@@ -484,7 +490,7 @@
     setInterval(updateClock, 1000);
     updateClock();
 
-    /* RENDER DISPLAY LOGIC */
+    /* RENDER DISPLAY LOGIC WITH AUTO-FIT CLAMP SIZING */
     function renderDisplay() {
       const body = document.getElementById('main-body');
       const activeTheme = appState.theme || 'royal';
@@ -533,18 +539,18 @@
       if (appState.companies && appState.companies.length > 0) {
         appState.companies.forEach((comp, cIdx) => {
           const compSection = document.createElement('div');
-          compSection.className = 'w-full space-y-4 animate-enter';
+          compSection.className = 'w-full space-y-2 animate-enter flex flex-col items-center justify-center shrink-0';
 
           const hasGuests = comp.guests && comp.guests.length > 0;
 
           compSection.innerHTML = `
-            <div class="flex items-center justify-center space-x-4">
-              ${comp.logo ? `<img src="${comp.logo}" alt="Logo PT" class="h-10 md:h-14 w-auto object-contain drop-shadow-md">` : ''}
-              <h2 class="text-3xl md:text-5xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r ${titleGradient} drop-shadow-lg">
+            <div class="flex items-center justify-center space-x-3">
+              ${comp.logo ? `<img src="${comp.logo}" alt="Logo PT" class="h-8 md:h-10 w-auto object-contain drop-shadow-md">` : ''}
+              <h2 class="tv-title-clamp font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r ${titleGradient} drop-shadow-lg text-center">
                 ${escapeHtml(comp.companyName || 'NAMA PERUSAHAAN TAMU')}
               </h2>
             </div>
-            ${hasGuests ? `<div class="flex flex-wrap justify-center items-center gap-5 pt-1" id="company-guests-grid-${cIdx}"></div>` : ''}
+            ${hasGuests ? `<div class="flex flex-wrap justify-center items-center gap-3 pt-1 w-full" id="company-guests-grid-${cIdx}"></div>` : ''}
           `;
 
           multiContainer.appendChild(compSection);
@@ -553,19 +559,19 @@
             const guestsGrid = document.getElementById(`company-guests-grid-${cIdx}`);
             comp.guests.forEach((guest) => {
               const card = document.createElement('div');
-              card.className = `glass-card rounded-2xl p-4 px-6 flex items-center justify-start space-x-4 border ${borderAccent} shadow-2xl transition-all duration-300 min-w-[300px] max-w-[420px] text-left`;
+              card.className = `glass-card rounded-xl p-3 px-5 flex items-center justify-start space-x-3.5 border ${borderAccent} shadow-xl transition-all duration-300 min-w-[260px] max-w-[380px] text-left`;
 
               const initials = getInitials(guest.name);
 
               card.innerHTML = `
-                <div class="w-12 h-12 rounded-xl bg-gradient-to-tr ${avatarGradient} flex items-center justify-center text-slate-950 font-extrabold text-sm shrink-0 shadow-lg">
+                <div class="w-10 h-10 rounded-lg bg-gradient-to-tr ${avatarGradient} flex items-center justify-center text-slate-950 font-extrabold text-xs shrink-0 shadow-lg">
                   ${initials}
                 </div>
                 <div class="overflow-hidden">
-                  <h4 class="font-bold text-white text-sm md:text-base leading-snug truncate">
+                  <h4 class="font-bold text-white text-xs md:text-sm leading-snug truncate">
                     ${escapeHtml(guest.name)}
                   </h4>
-                  <p class="text-xs text-slate-300 font-semibold truncate mt-0.5 uppercase tracking-wider">
+                  <p class="text-[10px] text-slate-300 font-semibold truncate mt-0.5 uppercase tracking-wider">
                     ${escapeHtml(guest.title || 'Delegasi Tamu')}
                   </p>
                 </div>
@@ -807,11 +813,7 @@
     }
 
     function saveAndApply() {
-      saveStateFromForm();
-      localStorage.setItem('welcome_display_data', JSON.stringify(appState));
-      syncChannel.postMessage({ type: 'SYNC_UPDATE', payload: appState });
-      renderDisplay();
-
+      triggerBroadcastSync();
       adminModal.classList.add('hidden');
       adminModal.classList.remove('flex');
     }
@@ -947,7 +949,6 @@
 
     window.addEventListener('DOMContentLoaded', () => {
       requestWakeLock();
-      adjustTvScale();
       renderDisplay();
       renderCanvasAnimation();
     });
