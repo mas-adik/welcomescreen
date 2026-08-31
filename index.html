@@ -133,6 +133,15 @@
       font-size: clamp(1.75rem, 3.5vw, 3.25rem);
       line-height: 1.15;
     }
+
+    .tv-subheading-clamp {
+      font-size: clamp(0.6rem, 0.9vw, 0.95rem);
+      letter-spacing: 0.25em;
+    }
+
+    .tv-purpose-clamp {
+      font-size: clamp(0.9rem, 1.7vw, 1.5rem);
+    }
   </style>
 </head>
 
@@ -172,26 +181,27 @@
     <section
       class="my-auto py-2 flex flex-col items-center justify-center text-center animate-enter flex-1 min-h-0 overflow-hidden">
 
-      <!-- Subheading Badge -->
-      <div
-        class="inline-flex items-center px-6 py-1.5 rounded-full bg-white/10 border border-white/20 backdrop-blur-md mb-3 shrink-0 shadow-lg">
-        <span id="welcome-subheading"
-          class="text-[11px] md:text-xs font-black tracking-[0.25em] text-amber-300 uppercase">
-          SALAM HANGAT & SELAMAT DATANG
-        </span>
-      </div>
-
-      <!-- Agenda Topic -->
-      <p id="guest-purpose"
-        class="text-base md:text-xl text-slate-200 font-medium mb-6 max-w-4xl tracking-wide shrink-0 drop-shadow-lg truncate">
-        Agenda: Pembahasan Kerja Sama Strategis & Silaturahmi Bisnis
-      </p>
-
       <!-- Dynamic Multi-Company Guests Grid Container -->
       <div id="multi-company-container"
         class="w-full max-w-6xl flex flex-col justify-center items-center overflow-hidden flex-1 min-h-0">
-        <div id="multi-company-inner" class="w-full flex flex-col items-center justify-center gap-6 will-change-transform">
-          <!-- Dynamic PT and Guest Cards Injected via JS -->
+        <div id="multi-company-inner" class="w-full flex flex-col items-center justify-center gap-6 will-change-transform py-2">
+          <!-- Subheading Badge -->
+          <div
+            class="inline-flex items-center px-6 py-1.5 rounded-full bg-white/10 border border-white/20 backdrop-blur-md shrink-0 shadow-lg">
+            <span id="welcome-subheading" class="tv-subheading-clamp font-black text-amber-300 uppercase">
+              SALAM HANGAT & SELAMAT DATANG
+            </span>
+          </div>
+
+          <!-- Agenda Topic -->
+          <p id="guest-purpose"
+            class="tv-purpose-clamp text-slate-200 font-medium max-w-4xl tracking-wide shrink-0 drop-shadow-lg truncate">
+            Agenda: Pembahasan Kerja Sama Strategis & Silaturahmi Bisnis
+          </p>
+
+          <div id="multi-company-list" class="w-full flex flex-col items-center justify-center gap-6">
+            <!-- Dynamic PT and Guest Cards Injected via JS -->
+          </div>
         </div>
       </div>
     </section>
@@ -312,23 +322,31 @@
             <div>
               <label class="block text-[11px] font-semibold text-slate-300 mb-1.5">Pilih Tema & Animasi Latar</label>
               <div class="grid grid-cols-2 gap-2">
-                <button type="button" onclick="selectTheme('royal')"
-                  class="p-2.5 rounded-xl bg-[#0b132b] border border-amber-400/40 text-left transition-all hover:scale-[1.02]">
+                <button type="button" onclick="selectTheme('royal')" id="theme-btn-royal"
+                  class="relative p-2.5 rounded-xl bg-[#0b132b] border border-amber-400/40 text-left transition-all hover:scale-[1.02]">
+                  <span
+                    class="theme-check absolute top-1.5 right-1.5 w-5 h-5 rounded-full bg-amber-500 text-slate-950 text-[10px] font-black flex items-center justify-center hidden shadow-lg">✓</span>
                   <div class="text-[11px] text-amber-300 font-bold">1. Midnight Royal</div>
                   <div class="text-[9px] text-slate-400">Navy Dark + Sparkling Stars</div>
                 </button>
-                <button type="button" onclick="selectTheme('emerald')"
-                  class="p-2.5 rounded-xl bg-[#05241b] border border-emerald-400/40 text-left transition-all hover:scale-[1.02]">
+                <button type="button" onclick="selectTheme('emerald')" id="theme-btn-emerald"
+                  class="relative p-2.5 rounded-xl bg-[#05241b] border border-emerald-400/40 text-left transition-all hover:scale-[1.02]">
+                  <span
+                    class="theme-check absolute top-1.5 right-1.5 w-5 h-5 rounded-full bg-amber-500 text-slate-950 text-[10px] font-black flex items-center justify-center hidden shadow-lg">✓</span>
                   <div class="text-[11px] text-emerald-300 font-bold">2. Emerald Luxury</div>
                   <div class="text-[9px] text-slate-400">Emerald Dark + Glow Waves</div>
                 </button>
-                <button type="button" onclick="selectTheme('slate')"
-                  class="p-2.5 rounded-xl bg-[#0f172a] border border-sky-400/40 text-left transition-all hover:scale-[1.02]">
+                <button type="button" onclick="selectTheme('slate')" id="theme-btn-slate"
+                  class="relative p-2.5 rounded-xl bg-[#0f172a] border border-sky-400/40 text-left transition-all hover:scale-[1.02]">
+                  <span
+                    class="theme-check absolute top-1.5 right-1.5 w-5 h-5 rounded-full bg-amber-500 text-slate-950 text-[10px] font-black flex items-center justify-center hidden shadow-lg">✓</span>
                   <div class="text-[11px] text-sky-300 font-bold">3. Corporate Slate</div>
                   <div class="text-[9px] text-slate-400">Slate Metalic + Cyber Grid</div>
                 </button>
-                <button type="button" onclick="selectTheme('amethyst')"
-                  class="p-2.5 rounded-xl bg-[#170b24] border border-pink-400/40 text-left transition-all hover:scale-[1.02]">
+                <button type="button" onclick="selectTheme('amethyst')" id="theme-btn-amethyst"
+                  class="relative p-2.5 rounded-xl bg-[#170b24] border border-pink-400/40 text-left transition-all hover:scale-[1.02]">
+                  <span
+                    class="theme-check absolute top-1.5 right-1.5 w-5 h-5 rounded-full bg-amber-500 text-slate-950 text-[10px] font-black flex items-center justify-center hidden shadow-lg">✓</span>
                   <div class="text-[11px] text-pink-300 font-bold">4. Deep Amethyst</div>
                   <div class="text-[9px] text-slate-400">Violet Dark + Glowing Orbs</div>
                 </button>
@@ -617,9 +635,8 @@
         borderAccent = 'border-pink-400/30';
       }
 
-      const multiContainer = document.getElementById('multi-company-container');
-      const multiInner = document.getElementById('multi-company-inner');
-      multiInner.innerHTML = '';
+      const multiList = document.getElementById('multi-company-list');
+      multiList.innerHTML = '';
 
       if (appState.companies && appState.companies.length > 0) {
         appState.companies.forEach((comp, cIdx) => {
@@ -638,7 +655,7 @@
             ${hasGuests ? `<div class="flex flex-wrap justify-center items-center gap-3 pt-1 w-full" id="company-guests-grid-${cIdx}"></div>` : ''}
           `;
 
-          multiInner.appendChild(compSection);
+          multiList.appendChild(compSection);
 
           if (hasGuests) {
             const guestsGrid = document.getElementById(`company-guests-grid-${cIdx}`);
@@ -669,6 +686,7 @@
 
       initThemeParticles(activeTheme);
       applyAutoFit();
+      updateThemeSelection();
     }
 
     /* AUTO-FIT: skala otomatis area tamu agar selalu muat di layar tanpa scroll */
@@ -689,6 +707,22 @@
       const scale = Math.max(0.35, Math.min(1, availW / contentW, availH / contentH));
       inner.style.transformOrigin = 'center center';
       inner.style.transform = `scale(${scale})`;
+    }
+
+    /* Penanda tema yang sedang dipilih di panel kontrol */
+    function updateThemeSelection() {
+      ['royal', 'emerald', 'slate', 'amethyst'].forEach((theme) => {
+        const btn = document.getElementById(`theme-btn-${theme}`);
+        if (!btn) return;
+        const isActive = appState.theme === theme;
+        btn.classList.toggle('ring-2', isActive);
+        btn.classList.toggle('ring-amber-400', isActive);
+        btn.classList.toggle('ring-offset-2', isActive);
+        btn.classList.toggle('ring-offset-[#050811]', isActive);
+        btn.classList.toggle('scale-105', isActive);
+        const check = btn.querySelector('.theme-check');
+        if (check) check.classList.toggle('hidden', !isActive);
+      });
     }
 
     function getInitials(name) {
@@ -778,6 +812,8 @@
       } else {
         addCompanyBlock('', [], '');
       }
+
+      updateThemeSelection();
     }
 
     function addCompanyBlock(companyName = '', guests = [], logo = '') {
