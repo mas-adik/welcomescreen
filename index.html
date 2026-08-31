@@ -5,6 +5,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Lobby Welcome Display System - Enterprise Auto-Fit & Multi-Device Sync</title>
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
 
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -33,6 +36,7 @@
     body {
       width: 100vw;
       height: 100vh;
+      height: 100dvh;
       margin: 0;
       padding: 0;
       overflow: hidden !important;
@@ -140,13 +144,13 @@
   <main class="relative z-10 w-full h-full flex flex-col justify-between p-6 md:p-10 lg:p-12 overflow-hidden">
 
     <!-- HEADER: BRANDING & DIGITAL CLOCK -->
-    <header class="flex items-center justify-between w-full shrink-0 h-16">
-      <div class="flex items-center space-x-4">
+    <header class="flex items-center justify-between w-full shrink-0 h-16 min-w-0">
+      <div class="flex items-center space-x-4 min-w-0">
         <div id="host-logo-wrapper"
-          class="px-4 py-2 rounded-2xl bg-white/10 border border-white/20 backdrop-blur-md flex items-center space-x-3 shadow-lg">
+          class="px-4 py-2 rounded-2xl bg-white/10 border border-white/20 backdrop-blur-md flex items-center space-x-3 shadow-lg max-w-[70vw]">
           <img id="host-logo-img" src="" alt="Logo Perusahaan" class="h-8 w-auto object-contain hidden">
           <i id="host-logo-icon" class="fa-solid fa-building-user text-amber-400 text-lg"></i>
-          <span id="host-name-preview" class="font-bold text-xs md:text-sm tracking-widest text-white uppercase">PT.
+          <span id="host-name-preview" class="font-bold text-xs md:text-sm tracking-widest text-white uppercase truncate">PT.
             MAHAKARYA STAMPING JAYA</span>
         </div>
       </div>
@@ -166,7 +170,7 @@
 
     <!-- MAIN WELCOME CONTENT AREA (AUTO FIT WITHOUT SCROLL) -->
     <section
-      class="my-auto py-2 flex flex-col items-center justify-center text-center animate-enter flex-1 overflow-hidden">
+      class="my-auto py-2 flex flex-col items-center justify-center text-center animate-enter flex-1 min-h-0 overflow-hidden">
 
       <!-- Subheading Badge -->
       <div
@@ -185,8 +189,10 @@
 
       <!-- Dynamic Multi-Company Guests Grid Container -->
       <div id="multi-company-container"
-        class="w-full max-w-6xl flex flex-col justify-center items-center gap-6 overflow-hidden flex-1 max-h-[calc(100vh-210px)]">
-        <!-- Dynamic PT and Guest Cards Injected via JS -->
+        class="w-full max-w-6xl flex flex-col justify-center items-center overflow-hidden flex-1 min-h-0">
+        <div id="multi-company-inner" class="w-full flex flex-col items-center justify-center gap-6 will-change-transform">
+          <!-- Dynamic PT and Guest Cards Injected via JS -->
+        </div>
       </div>
     </section>
 
@@ -358,8 +364,8 @@
       <!-- Modal Footer Sync Trigger -->
       <div class="px-6 py-3.5 bg-white/5 border-t border-white/10 flex items-center justify-between shrink-0">
         <div class="text-[11px] text-slate-400 flex items-center space-x-1.5">
-          <i class="fa-solid fa-wifi text-emerald-400 animate-pulse"></i>
-          <span>Multi-Device Auto Sync Active</span>
+          <i id="sync-status-icon" class="fa-solid fa-wifi text-emerald-400 animate-pulse"></i>
+          <span id="sync-status-text" class="text-slate-400">Memeriksa koneksi server…</span>
         </div>
         <div class="flex items-center space-x-3">
           <button onclick="triggerBroadcastSync(event)"
@@ -378,48 +384,126 @@
   </div>
 
   <script>
-    /* REALTIME MULTI-DEVICE AUTO-POLLING ENGINE */
-    const syncChannel = new BroadcastChannel('lobby_display_sync');
+    /* REALTIME MULTI-DEVICE SYNC ENGINE
+       - Server (NAS): GET/POST /api/config -> konfigurasi bersama semua perangkat
+       - BroadcastChannel: sinkron antar tab di perangkat yang sama
+       - localStorage: cache lokal + fallback offline */
+    const API_CONFIG_URL = '/api/config';
+    let syncChannel = null;
+    try {
+      syncChannel = new BroadcastChannel('lobby_display_sync');
+    } catch (e) {
+      console.warn('BroadcastChannel tidak didukung browser ini:', e.message || e);
+    }
     let lastKnownTimestamp = localStorage.getItem('lobby_sync_timestamp') || '0';
 
-    syncChannel.onmessage = (event) => {
-      if (event.data && event.data.type === 'SYNC_UPDATE') {
-        appState = event.data.payload;
-        renderDisplay();
-      }
-    };
+    if (syncChannel) {
+      syncChannel.onmessage = (event) => {
+        if (event.data && event.data.type === 'SYNC_UPDATE') {
+          appState = event.data.payload;
+          renderDisplay();
+        }
+      };
+    }
 
-    // Auto Check Updates Setiap 2 Detik (Mendukung Sync Antar-Perangkat HP/Laptop -> TV)
-    setInterval(() => {
-      const currentRemoteTime = localStorage.getItem('lobby_sync_timestamp');
-      if (currentRemoteTime && currentRemoteTime !== lastKnownTimestamp) {
-        lastKnownTimestamp = currentRemoteTime;
+    function updateSyncStatus(serverOk) {
+      const statusText = document.getElementById('sync-status-text');
+      const statusIcon = document.getElementById('sync-status-icon');
+      if (!statusText) return;
+      if (serverOk) {
+        statusText.textContent = 'Server Sync Aktif — Semua Perangkat Terhubung';
+        statusText.className = 'text-emerald-400';
+        if (statusIcon) statusIcon.className = 'fa-solid fa-wifi text-emerald-400 animate-pulse';
+      } else {
+        statusText.textContent = 'Sync Lokal — Server NAS Tidak Terjangkau';
+        statusText.className = 'text-amber-400';
+        if (statusIcon) statusIcon.className = 'fa-solid fa-wifi text-amber-400 animate-pulse';
+      }
+    }
+
+    async function fetchRemoteConfig() {
+      try {
+        const res = await fetch(`${API_CONFIG_URL}?since=${encodeURIComponent(lastKnownTimestamp)}`, {
+          cache: 'no-store',
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const payload = await res.json();
+        if (payload && payload.changed && payload.data) {
+          lastKnownTimestamp = payload.ts || lastKnownTimestamp;
+          appState = payload.data;
+          localStorage.setItem('welcome_display_data', JSON.stringify(appState));
+          localStorage.setItem('lobby_sync_timestamp', lastKnownTimestamp);
+          renderDisplay();
+        } else if (payload && payload.ts) {
+          lastKnownTimestamp = payload.ts;
+        }
+        return true;
+      } catch (err) {
+        console.warn('Remote sync error:', err.message || err);
+        return false;
+      }
+    }
+
+    async function pushRemoteConfig() {
+      try {
+        const res = await fetch(API_CONFIG_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ data: appState }),
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const payload = await res.json();
+        if (payload && payload.ts) {
+          lastKnownTimestamp = payload.ts;
+          localStorage.setItem('lobby_sync_timestamp', lastKnownTimestamp);
+        }
+        return true;
+      } catch (err) {
+        console.warn('Push sync error:', err.message || err);
+        return false;
+      }
+    }
+
+    // Auto Check Updates Setiap 2 Detik:
+    // 1) Perangkat lain (laptop -> TV) lewat server NAS
+    // 2) Tab lain di browser yang sama lewat localStorage + BroadcastChannel
+    setInterval(async () => {
+      const currentLocalTime = localStorage.getItem('lobby_sync_timestamp');
+      if (currentLocalTime && currentLocalTime !== lastKnownTimestamp) {
+        lastKnownTimestamp = currentLocalTime;
         const freshData = localStorage.getItem('welcome_display_data');
         if (freshData) {
           appState = JSON.parse(freshData);
           renderDisplay();
         }
       }
+      const serverOk = await fetchRemoteConfig();
+      updateSyncStatus(serverOk);
     }, 2000);
 
-    function triggerBroadcastSync(evt) {
+    async function triggerBroadcastSync(evt) {
       saveStateFromForm();
-      const nowStr = Date.now().toString();
-      lastKnownTimestamp = nowStr;
+      const serverOk = await pushRemoteConfig();
+      if (!serverOk) {
+        lastKnownTimestamp = Date.now().toString();
+      }
       localStorage.setItem('welcome_display_data', JSON.stringify(appState));
-      localStorage.setItem('lobby_sync_timestamp', nowStr);
-      syncChannel.postMessage({ type: 'SYNC_UPDATE', payload: appState });
+      localStorage.setItem('lobby_sync_timestamp', lastKnownTimestamp);
+      if (syncChannel) syncChannel.postMessage({ type: 'SYNC_UPDATE', payload: appState });
       renderDisplay();
+      updateSyncStatus(serverOk);
 
       const btn = evt ? evt.currentTarget : document.querySelector('button[onclick*="triggerBroadcastSync"]');
       if (btn) {
         const originalText = btn.innerHTML;
-        btn.innerHTML = `<i class="fa-solid fa-check"></i><span>Tersinkron ke TV!</span>`;
+        btn.innerHTML = serverOk
+          ? `<i class="fa-solid fa-check"></i><span>Tersinkron ke Server & TV!</span>`
+          : `<i class="fa-solid fa-check"></i><span>Tersimpan Lokal</span>`;
         btn.classList.replace('bg-emerald-500', 'bg-emerald-400');
         setTimeout(() => {
           btn.innerHTML = originalText;
           btn.classList.replace('bg-emerald-400', 'bg-emerald-500');
-        }, 1500);
+        }, 1800);
       }
     }
 
@@ -534,7 +618,8 @@
       }
 
       const multiContainer = document.getElementById('multi-company-container');
-      multiContainer.innerHTML = '';
+      const multiInner = document.getElementById('multi-company-inner');
+      multiInner.innerHTML = '';
 
       if (appState.companies && appState.companies.length > 0) {
         appState.companies.forEach((comp, cIdx) => {
@@ -553,13 +638,13 @@
             ${hasGuests ? `<div class="flex flex-wrap justify-center items-center gap-3 pt-1 w-full" id="company-guests-grid-${cIdx}"></div>` : ''}
           `;
 
-          multiContainer.appendChild(compSection);
+          multiInner.appendChild(compSection);
 
           if (hasGuests) {
             const guestsGrid = document.getElementById(`company-guests-grid-${cIdx}`);
             comp.guests.forEach((guest) => {
               const card = document.createElement('div');
-              card.className = `glass-card rounded-xl p-3 px-5 flex items-center justify-start space-x-3.5 border ${borderAccent} shadow-xl transition-all duration-300 min-w-[260px] max-w-[380px] text-left`;
+              card.className = `glass-card rounded-xl p-3 px-5 flex items-center justify-start space-x-3.5 border ${borderAccent} shadow-xl transition-all duration-300 min-w-[230px] md:min-w-[260px] max-w-[380px] text-left`;
 
               const initials = getInitials(guest.name);
 
@@ -583,6 +668,27 @@
       }
 
       initThemeParticles(activeTheme);
+      applyAutoFit();
+    }
+
+    /* AUTO-FIT: skala otomatis area tamu agar selalu muat di layar tanpa scroll */
+    function applyAutoFit() {
+      const container = document.getElementById('multi-company-container');
+      const inner = document.getElementById('multi-company-inner');
+      if (!container || !inner) return;
+
+      inner.style.transform = 'none';
+
+      const availW = container.clientWidth;
+      const availH = container.clientHeight;
+      const contentW = inner.scrollWidth;
+      const contentH = inner.scrollHeight;
+
+      if (availW <= 0 || availH <= 0 || contentW <= 0 || contentH <= 0) return;
+
+      const scale = Math.max(0.35, Math.min(1, availW / contentW, availH / contentH));
+      inner.style.transformOrigin = 'center center';
+      inner.style.transform = `scale(${scale})`;
     }
 
     function getInitials(name) {
@@ -838,8 +944,15 @@
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
     }
-    window.addEventListener('resize', resizeCanvas);
+    window.addEventListener('resize', () => {
+      resizeCanvas();
+      applyAutoFit();
+    });
     resizeCanvas();
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(applyAutoFit);
+    }
+    window.addEventListener('load', applyAutoFit);
 
     class ThemeParticle {
       constructor(theme) {
@@ -951,6 +1064,10 @@
       requestWakeLock();
       renderDisplay();
       renderCanvasAnimation();
+      // Ambil konfigurasi terbaru dari server NAS (kalau ada) lalu mulai polling
+      fetchRemoteConfig().then((serverOk) => {
+        updateSyncStatus(serverOk);
+      });
     });
   </script>
 </body>

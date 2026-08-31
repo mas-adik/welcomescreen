@@ -1,4 +1,12 @@
-FROM nginx:alpine
-COPY . /usr/share/nginx/html
+FROM node:20-alpine
+
+WORKDIR /app
+
+COPY . .
+
+# Direktori penyimpanan konfigurasi bersama antar perangkat
+RUN mkdir -p /data
+
 EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+
+CMD ["node", "server.js"]

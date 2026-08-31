@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  welcomescreen:
+    image: masadik/lobby-display:latest
+    container_name: welcomescreen
+    restart: always
+    ports:
+      - "9095:80"
+    volumes:
+      # Konfigurasi display disimpan di NAS agar semua perangkat tersinkron
+      - ./data:/data
