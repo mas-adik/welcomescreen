@@ -107,27 +107,6 @@
       }
     }
 
-    /* Continuous Marquee Running Text */
-    @keyframes marquee {
-      0% {
-        transform: translateX(100%);
-      }
-
-      100% {
-        transform: translateX(-100%);
-      }
-    }
-
-    .animate-marquee {
-      display: inline-block;
-      white-space: nowrap;
-      animation: marquee 35s linear infinite;
-    }
-
-    .animate-marquee:hover {
-      animation-play-state: paused;
-    }
-
     /* Dynamic Clamp Text Sizing for TV */
     .tv-title-clamp {
       font-size: clamp(1.75rem, 3.5vw, 3.25rem);
@@ -215,11 +194,11 @@
           <i class="fa-solid fa-shield-halved text-amber-400"></i>
           <span>SAFETY INDUCTION</span>
         </div>
-        <div class="relative w-full overflow-hidden whitespace-nowrap">
-          <div id="marquee-text" class="animate-marquee font-semibold text-slate-100 text-xs tracking-wide">
-            Selamat datang di gedung kami. Demi keselamatan bersama, harap perhatikan jalur evakuasi dan denah darurat
-            di sekitar area Anda • Bila terjadi keadaan darurat, ikuti petunjuk menuju Titik Kumpul (Assembly Point) •
-            Terima kasih atas kunjungan Anda.
+        <div id="marquee-viewport" class="relative w-full overflow-hidden whitespace-nowrap">
+          <div id="marquee-track"
+            class="inline-flex items-center gap-12 will-change-transform font-semibold text-slate-100 text-xs tracking-wide">
+            <span class="marquee-part"></span>
+            <span class="marquee-part"></span>
           </div>
         </div>
       </div>
@@ -615,7 +594,7 @@
       document.getElementById('host-name-preview').textContent = appState.hostName || 'NAMA PERUSAHAAN';
       document.getElementById('welcome-subheading').textContent = appState.welcomeSub;
       document.getElementById('guest-purpose').textContent = appState.purpose;
-      document.getElementById('marquee-text').textContent = appState.marquee;
+      renderMarquee(false);
 
       let titleGradient = 'from-amber-200 via-yellow-300 to-amber-500';
       let avatarGradient = 'from-amber-500 to-yellow-300';
@@ -723,6 +702,55 @@
         const check = btn.querySelector('.theme-check');
         if (check) check.classList.toggle('hidden', !isActive);
       });
+    }
+
+    /* MARQUEE JS ENGINE
+       Animasi CSS kadang berhenti di browser TV Android (pengaturan "remove
+       animations" / hover remote macet). Engine ini pakai requestAnimationFrame
+       agar running text selalu berjalan di semua perangkat. */
+    let marqueeAnimId = null;
+    let marqueeTextCache = '';
+
+    function startMarqueeAnimation() {
+      if (marqueeAnimId) cancelAnimationFrame(marqueeAnimId);
+      const track = document.getElementById('marquee-track');
+      const parts = track ? track.querySelectorAll('.marquee-part') : [];
+      if (!track || parts.length < 2) return;
+
+      const gap = parseFloat(getComputedStyle(track).columnGap) || 0;
+      const halfWidth = parts[0].offsetWidth + gap;
+      const text = marqueeTextCache.trim();
+      if (halfWidth <= 0 || !text) {
+        track.style.transform = 'translateX(0px)';
+        return;
+      }
+
+      const speed = Math.max(30, halfWidth / 35); // kecepatan setara animasi lama 35s
+      let x = 0;
+      let lastTime = performance.now();
+      track.style.transform = 'translateX(0px)';
+
+      function step(now) {
+        const dt = Math.min((now - lastTime) / 1000, 0.1);
+        lastTime = now;
+        x -= speed * dt;
+        if (x <= -halfWidth) x += halfWidth;
+        track.style.transform = `translateX(${x}px)`;
+        marqueeAnimId = requestAnimationFrame(step);
+      }
+      marqueeAnimId = requestAnimationFrame(step);
+    }
+
+    function renderMarquee(force) {
+      const parts = document.querySelectorAll('.marquee-part');
+      if (!parts.length) return;
+      const text = appState.marquee || '';
+      if (!force && text === marqueeTextCache) return;
+      marqueeTextCache = text;
+      parts.forEach((p) => {
+        p.textContent = text;
+      });
+      startMarqueeAnimation();
     }
 
     function getInitials(name) {
@@ -983,12 +1011,17 @@
     window.addEventListener('resize', () => {
       resizeCanvas();
       applyAutoFit();
+      startMarqueeAnimation();
     });
     resizeCanvas();
     if (document.fonts && document.fonts.ready) {
       document.fonts.ready.then(applyAutoFit);
+      document.fonts.ready.then(startMarqueeAnimation);
     }
-    window.addEventListener('load', applyAutoFit);
+    window.addEventListener('load', () => {
+      applyAutoFit();
+      startMarqueeAnimation();
+    });
 
     class ThemeParticle {
       constructor(theme) {
@@ -1099,6 +1132,7 @@
     window.addEventListener('DOMContentLoaded', () => {
       requestWakeLock();
       renderDisplay();
+      renderMarquee(true);
       renderCanvasAnimation();
       // Ambil konfigurasi terbaru dari server NAS (kalau ada) lalu mulai polling
       fetchRemoteConfig().then((serverOk) => {
